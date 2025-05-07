@@ -1,6 +1,6 @@
 from pygame import *
-from random import *
-from time import time as AndreiSpidranTaimerPravda
+from random import choice, randint
+from time import sleep as AndreiSpidranSleepPravda
 
 img_back = "background.jpg"
 img_player = "palka.png"
@@ -32,6 +32,13 @@ class Player(GameSprite):
             self.rect.y -= self.speed
         if keys[K_DOWN] and self.rect.y < win_height - 150:
             self.rect.y += self.speed
+
+def change_skin(obj,img_skin):
+    new_skin = transform.scale(image.load(img_skin),(obj.rect.width,obj.rect.height))
+    obj.image = new_skin
+
+ball_skins = ["eto_miach!!!!!!!!Pravda12345%.png","ballskin1.png","ballskin2.png"]
+player_skins = ["palka.png","palkaskin1.png","palkaskin2.png"]
         
 win_width = 700
 win_height = 500
@@ -51,8 +58,9 @@ font1 = font.Font(None,35)
 lose_text_l = font1.render('PLAYER 1 LOSE!', True, (255,0,0))
 lose_text_r = font1.render('PLAYER 2 LOSE!', True, (255,0,0))
 
-speed_x = 3
-speed_y = 3
+speed_x = 3 * choice((1,-1))
+speed_y = 3 * choice((1,-1))
+score = 0
 
 game = True
 finish = False
@@ -63,18 +71,15 @@ while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
-        if e.type == KEYDOWN:
-            if e.key == K_r and finish == True:
-                #PEREZAPUSK!!!
-                speed_x = 3
-                speed_y = 3
-                ball.rect.x = 324
-                ball.rect.y = 224
-                playerl.rect.y = win_height - 270
-                playerr.rect.y = win_height - 270
-                finish = False
+        if e.type == KEYDOWN and e.key == K_r:
+            change_skin(ball,ball_skins[randint(0,len(ball_skins)-1)])
+        if e.type == KEYDOWN and e.key == K_t:
+            change_skin(playerl,player_skins[randint(0,len(player_skins)-1)])
+        if e.type == KEYDOWN and e.key == K_y:
+            change_skin(playerr,player_skins[randint(0,len(player_skins)-1)])
+                
 
-    if finish != True:
+    if not finish:
         window.blit(background,(0,0))
 
         playerl.updatel()
@@ -96,6 +101,7 @@ while game:
 
         if sprite.collide_rect(ball,playerl) or sprite.collide_rect(ball,playerr):
             speed_x *= -1.1
+            score += 1
             if speed_x > 50:
                 speed_x = 50
             if speed_x < -50:
@@ -109,4 +115,16 @@ while game:
         ball.reset()
 
         display.update()
+    else:
+        #PEREZAPUSK!!!
+        AndreiSpidranSleepPravda(3)
+        speed_x = 3 * choice((1,-1))
+        speed_y = 3 * choice((1,-1))
+        ball.rect.x = 324
+        ball.rect.y = 224
+        playerl.rect.y = win_height - 270
+        playerr.rect.y = win_height - 270
+        score = 0
+        finish = False
+
     clock.tick(FPS)
